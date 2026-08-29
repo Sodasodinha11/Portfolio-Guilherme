@@ -59,6 +59,8 @@ function horizontalLoop(items: HTMLElement[], config: HorizontalLoopConfig = {})
   let timeWrap = gsap.utils.wrap(0, 1);
   let currentIndex = 0;
   let lastIndex = 0;
+  let indexIsDirty = false;
+  let proxy: HTMLDivElement | undefined;
 
   const timeline = gsap.timeline({
     repeat: config.repeat,
@@ -141,13 +143,13 @@ function horizontalLoop(items: HTMLElement[], config: HorizontalLoopConfig = {})
     return closestItem;
   };
 
-  const refresh = () => {
+  const refresh = (rebuildTimeline = false) => {
     const progress = timeline.progress();
     timeline.progress(0, true);
     populateWidths();
-    populateTimeline();
+    if (rebuildTimeline) populateTimeline();
     populateOffsets();
-    if (config.draggable && timeline.paused()) timeline.time(times[currentIndex], false);
+    if (rebuildTimeline && config.draggable && timeline.paused()) timeline.time(times[currentIndex], false);
     else timeline.progress(progress, false);
   };
 
@@ -166,7 +168,9 @@ function horizontalLoop(items: HTMLElement[], config: HorizontalLoopConfig = {})
     }
     if (time < 0 || time > timeline.duration()) vars.modifiers = { time: timeWrap };
     currentIndex = newIndex;
+    indexIsDirty = false;
     vars.overwrite = true;
+    if (proxy) gsap.killTweensOf(proxy);
     if (vars.duration === 0) {
       timeline.time(timeWrap(time), false);
       return gsap.to({}, { duration: 0 });
@@ -177,12 +181,15 @@ function horizontalLoop(items: HTMLElement[], config: HorizontalLoopConfig = {})
   timeline.toIndex = toIndex;
   timeline.closestIndex = (setCurrent = false) => {
     const index = closestIndex(times, timeline.time(), timeline.duration());
-    if (setCurrent) currentIndex = index;
+    if (setCurrent) {
+      currentIndex = index;
+      indexIsDirty = false;
+    }
     return index;
   };
-  timeline.current = () => currentIndex;
-  timeline.next = (vars = {}) => toIndex(currentIndex + 1, vars);
-  timeline.previous = (vars = {}) => toIndex(currentIndex - 1, vars);
+  timeline.current = () => indexIsDirty ? timeline.closestIndex(true) : currentIndex;
+  timeline.next = (vars = {}) => toIndex(timeline.current() + 1, vars);
+  timeline.previous = (vars = {}) => toIndex(timeline.current() - 1, vars);
   timeline.times = times;
   timeline.progress(1, true).progress(0, true);
   timeline.eventCallback("onUpdate", () => {
@@ -195,7 +202,7 @@ function horizontalLoop(items: HTMLElement[], config: HorizontalLoopConfig = {})
   });
   let draggable: Draggable | undefined;
   if (config.draggable) {
-    const proxy = document.createElement("div");
+    proxy = document.createElement("div");
     const wrapProgress = gsap.utils.wrap(0, 1);
     let ratio = 1 / totalWidth;
     let startProgress = timeline.progress();
@@ -209,12 +216,14 @@ function horizontalLoop(items: HTMLElement[], config: HorizontalLoopConfig = {})
       inertia: true,
       dragClickables: true,
       overshootTolerance: 0,
+      throwResistance: 1800,
+      maxDuration: 0.75,
       onPressInit() {
         config.onPress?.();
         gsap.killTweensOf(timeline);
         timeline.pause();
         startProgress = timeline.progress();
-        refresh();
+        refresh(false);
         ratio = 1 / totalWidth;
         gsap.set(proxy, { x: startProgress / -ratio });
       },
@@ -236,7 +245,8 @@ function horizontalLoop(items: HTMLElement[], config: HorizontalLoopConfig = {})
       },
       onRelease() {
         syncIndex();
-        config.onRelease?.();
+        if (draggable?.isThrowing) indexIsDirty = true;
+        else config.onRelease?.();
       },
       onThrowComplete() {
         syncIndex();
@@ -246,19 +256,23 @@ function horizontalLoop(items: HTMLElement[], config: HorizontalLoopConfig = {})
     timeline.draggable = draggable;
   }
   timeline.cleanup = () => {
-    window.removeEventListener("resize", refresh);
+    window.removeEventListener("resize", handleResize);
     draggable?.kill();
     timeline.kill();
     gsap.set(items, { clearProps: "x,xPercent" });
   };
-  window.addEventListener("resize", refresh);
+  const handleResize = () => refresh(!(draggable?.isDragging));
+  window.addEventListener("resize", handleResize);
   timeline.closestIndex(true);
   lastIndex = currentIndex;
   config.onChange?.(items[currentIndex], currentIndex);
   return timeline;
 }
 
-const introProjects = [projects[0], projects[4], projects[6]];
+const introProjectSlugs = ["yamal", "tobi-uchiha", "ecco2k"];
+const introProjects = introProjectSlugs
+  .map((slug) => projects.find((project) => project.slug === slug))
+  .filter((project): project is (typeof projects)[number] => Boolean(project));
 
 function KineticLine({ text }: { text: string }) {
   return (
@@ -278,12 +292,14 @@ export function PortfolioShowcase() {
   const loopTween = useRef<gsap.core.Tween | null>(null);
   const wheelGestureActive = useRef(false);
   const wheelGestureTimer = useRef<number | null>(null);
+  const wheelDelta = useRef(0);
   const didSwipe = useRef(false);
 
   const pulseGallery = useCallback((direction: number) => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const motions = wheelRef.current?.querySelectorAll<HTMLElement>(".poster-motion");
     if (!motions?.length) return;
+    gsap.killTweensOf(motions);
     gsap.fromTo(motions, {
       xPercent: direction * 0.9,
       filter: "blur(1.4px)",
@@ -293,6 +309,7 @@ export function PortfolioShowcase() {
       duration: 0.68,
       ease: "power3.out",
       stagger: 0.012,
+      overwrite: "auto",
       clearProps: "filter,transform",
     });
   }, []);
@@ -303,6 +320,7 @@ export function PortfolioShowcase() {
       setActive((current) => (current + direction + projects.length) % projects.length);
       return;
     }
+    loopTween.current?.kill();
     pulseGallery(direction);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     loopTween.current = direction > 0
@@ -316,6 +334,7 @@ export function PortfolioShowcase() {
       setActive(index);
       return;
     }
+    loopTween.current?.kill();
     const direction = circularDistance(index, active) >= 0 ? 1 : -1;
     pulseGallery(direction);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -566,15 +585,24 @@ export function PortfolioShowcase() {
 
     const onWheel = (event: WheelEvent) => {
       event.preventDefault();
-      const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-      if (wheelGestureTimer.current) window.clearTimeout(wheelGestureTimer.current);
+      const rawDelta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+      const deltaScale = event.deltaMode === WheelEvent.DOM_DELTA_LINE
+        ? 24
+        : event.deltaMode === WheelEvent.DOM_DELTA_PAGE
+          ? wheel.clientHeight
+          : 1;
+      wheelDelta.current += rawDelta * deltaScale;
+      if (wheelGestureActive.current || Math.abs(wheelDelta.current) < 28) return;
+
+      const direction = wheelDelta.current > 0 ? 1 : -1;
+      wheelDelta.current = 0;
+      wheelGestureActive.current = true;
+      move(direction);
       wheelGestureTimer.current = window.setTimeout(() => {
         wheelGestureActive.current = false;
         wheelGestureTimer.current = null;
-      }, 1150);
-      if (Math.abs(delta) < 6 || wheelGestureActive.current) return;
-      wheelGestureActive.current = true;
-      move(delta > 0 ? 1 : -1);
+        wheelDelta.current = 0;
+      }, 440);
     };
 
     wheel.addEventListener("wheel", onWheel, { passive: false });
@@ -583,6 +611,7 @@ export function PortfolioShowcase() {
       window.cancelAnimationFrame(initialFrame);
       if (wheelGestureTimer.current) window.clearTimeout(wheelGestureTimer.current);
       wheelGestureActive.current = false;
+      wheelDelta.current = 0;
       loopTween.current?.kill();
       loop.cleanup();
       loopRef.current = null;
@@ -793,7 +822,7 @@ export function PortfolioShowcase() {
                   return (
                   <button
                     type="button"
-                    className={`wheel-card ${isActive ? "is-active" : ""}`}
+                    className={`wheel-card ${project.layout === "landscape" ? "is-landscape" : ""} ${isActive ? "is-active" : ""}`}
                     key={project.slug}
                     data-project-index={index}
                     onClick={(event) => {
@@ -833,7 +862,6 @@ export function PortfolioShowcase() {
       <section className="about-section" id="sobre">
         <div className="about-aside">
           <p className="section-label">Sobre</p>
-          <p><em>O design como linguagem visual, pesquisa e experimentação.</em></p>
         </div>
         <div className="about-copy">
           <h2><span className="couture-face">IDEIA, IMAGEM<br />E PRESENÇA.</span></h2>

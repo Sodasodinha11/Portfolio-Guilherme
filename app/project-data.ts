@@ -12,9 +12,63 @@ export type Project = {
   role: string;
   accent: string;
   hasVideo?: boolean;
+  layout?: "portrait" | "landscape";
+  gallery?: Array<{
+    src: string;
+    alt: string;
+    wide?: boolean;
+  }>;
 };
 
 export const projects: Project[] = [
+  {
+    slug: "nature",
+    title: "Nature",
+    eyebrow: "Redesign de Marca · 2026",
+    category: "Redesign de Marca",
+    year: "2026",
+    image: "/artworks/nature/nature-cover.png",
+    width: 2400,
+    height: 1350,
+    alt: "Nova assinatura visual da Nature em verde claro sobre fundo verde escuro",
+    description: "Redesign de identidade visual desenvolvido para uma cliente, com uma assinatura mais orgânica, próxima e reconhecível.",
+    role: "Redesign de logo, construção do símbolo, sistema de versões e aplicações visuais.",
+    accent: "#d06bff",
+    layout: "landscape",
+    gallery: [
+      {
+        src: "/artworks/nature/nature-secondary.png",
+        alt: "Versão secundária verde escura da assinatura Nature",
+        wide: true,
+      },
+      {
+        src: "/artworks/nature/nature-versions.png",
+        alt: "Versões positiva e negativa da identidade Nature",
+      },
+      {
+        src: "/artworks/nature/nature-monochrome.png",
+        alt: "Versões monocromáticas preta e branca da marca Nature",
+      },
+      {
+        src: "/artworks/nature/nature-symbol-palette.png",
+        alt: "Símbolo e paleta de cores da identidade Nature",
+        wide: true,
+      },
+      {
+        src: "/artworks/nature/nature-awning.png",
+        alt: "Aplicação da marca Nature em toldo verde",
+        wide: true,
+      },
+      {
+        src: "/artworks/nature/nature-bag.png",
+        alt: "Aplicação da identidade Nature em embalagem de entrega",
+      },
+      {
+        src: "/artworks/nature/nature-storefront.png",
+        alt: "Aplicação da marca Nature em fachada de loja",
+      },
+    ],
+  },
   {
     slug: "yamal",
     title: "Lamine Yamal",

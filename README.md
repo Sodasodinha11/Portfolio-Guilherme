@@ -35,6 +35,23 @@ npm run build
 npm test
 ```
 
+## Hospedagem
+
+O mesmo código mantém duas saídas de publicação independentes:
+
+```bash
+# Cloudflare Workers
+pnpm run build:cloudflare
+pnpm run deploy:cloudflare
+
+# Vercel
+pnpm run build:vercel
+```
+
+Na Vercel, importe este repositório pelo GitHub. O arquivo `vercel.json`
+seleciona automaticamente o build correto. A configuração original em
+`vite.config.ts` permanece reservada para Cloudflare Workers.
+
 ## Onde editar
 
 - Conteúdo e estrutura: `app/`

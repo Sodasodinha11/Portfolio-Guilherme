@@ -50,17 +50,22 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       <section className="project-intro">
         <p className="kicker">{project.category}</p>
-        <h1>{project.category === "Pôster Esportivo" ? project.title : <span className="couture-face couture-face--project">{project.title}</span>}</h1>
+        <h1>{project.title}</h1>
         <div className="project-facts">
           <p><span>Projeto</span>{project.description}</p>
           <p><span>Minha contribuição</span>{project.role}</p>
         </div>
       </section>
 
-      <section className={`project-media ${project.hasVideo ? "has-video" : ""}`}>
-        <figure>
+      <section className={`project-media ${project.hasVideo ? "has-video" : ""} ${project.gallery?.length ? "project-media--gallery" : ""}`}>
+        <figure className={project.gallery?.length ? "project-media__hero" : undefined}>
           <img src={project.image} alt={project.alt} />
         </figure>
+        {project.gallery?.map((item) => (
+          <figure className={item.wide ? "project-gallery-wide" : undefined} key={item.src}>
+            <img src={item.src} alt={item.alt} loading="lazy" />
+          </figure>
+        ))}
         {project.hasVideo && (
           <figure className="video-figure">
             <video controls playsInline preload="metadata" poster={project.image}>
