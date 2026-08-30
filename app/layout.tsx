@@ -2,13 +2,25 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { SmoothScroll } from "./smooth-scroll";
 
+const siteTitle = "Guilherme Miranda — Designer Gráfico";
+const siteDescription =
+  "Portfólio de Guilherme Miranda: identidade visual, direção de arte, design editorial e composição gráfica.";
+
 export const metadata: Metadata = {
   title: {
-    default: "Guilherme Miranda — Designer Gráfico",
+    default: siteTitle,
     template: "%s — Guilherme Miranda",
   },
-  description:
-    "Portfólio de Guilherme Miranda: identidade visual, direção de arte, design editorial e composição gráfica.",
+  description: siteDescription,
+  openGraph: {
+    title: siteTitle,
+    description: siteDescription,
+  },
+  twitter: {
+    card: "summary",
+    title: siteTitle,
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({

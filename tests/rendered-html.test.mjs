@@ -28,7 +28,7 @@ test("server-renders Guilherme's portfolio home", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>Guilherme Miranda — Designer Gráfico/);
+  assert.match(html, /<title>Guilherme Miranda — Designer Gráfico<\/title>/);
   assert.match(html, /GUILHERME/);
   assert.match(html, /MIRANDA/);
   assert.match(html, /TRABALHOS SELECIONADOS/i);

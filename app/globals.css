@@ -843,6 +843,18 @@ footer > .section-label { grid-column: 1 / -1; align-self: start; padding-bottom
 }
 
 @media (max-width: 460px) {
+  .project-nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 20px;
+  }
+  .project-nav > a:first-child {
+    min-width: 0;
+    justify-self: start;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .project-nav .wordmark { justify-self: end; }
+  .project-nav > span { display: none; }
   .hero-actions { align-items: flex-start; flex-direction: column; gap: 18px; }
   .hero-availability { grid-template-columns: auto 1fr; }
   .hero-availability span:last-child { grid-column: 2; justify-self: start; }
