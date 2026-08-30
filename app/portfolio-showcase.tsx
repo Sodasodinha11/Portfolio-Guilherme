@@ -288,6 +288,7 @@ export function PortfolioShowcase() {
   const [active, setActive] = useState(0);
   const mainRef = useRef<HTMLElement>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
+  const projectIndexRef = useRef<HTMLElement>(null);
   const loopRef = useRef<HorizontalLoopTimeline | null>(null);
   const loopTween = useRef<gsap.core.Tween | null>(null);
   const wheelGestureActive = useRef(false);
@@ -340,6 +341,27 @@ export function PortfolioShowcase() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     loopTween.current = loop.toIndex(index, { duration: reduced ? 0 : 0.92, ease: "power3.inOut" });
   }, [active, pulseGallery]);
+
+  useEffect(() => {
+    const strip = projectIndexRef.current;
+    if (!strip || !window.matchMedia("(max-width: 760px)").matches) return;
+
+    const row = strip.querySelector<HTMLElement>(".project-index-row.is-active");
+    if (!row) return;
+
+    const stripRect = strip.getBoundingClientRect();
+    const rowRect = row.getBoundingClientRect();
+    const centeredLeft = strip.scrollLeft
+      + rowRect.left
+      - stripRect.left
+      - (strip.clientWidth - rowRect.width) / 2;
+    const maxLeft = Math.max(0, strip.scrollWidth - strip.clientWidth);
+
+    strip.scrollTo({
+      left: Math.min(maxLeft, Math.max(0, centeredLeft)),
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
+  }, [active]);
 
   useLayoutEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -714,7 +736,7 @@ export function PortfolioShowcase() {
           <img className="intro-shape intro-shape--violet" src="/media/blob-violet.svg" alt="" width="500" height="500" />
         </div>
         <div className="intro-topline">
-          <span>GM®</span>
+          <span className="wordmark intro-wordmark">GM<span>®</span></span>
           <span>Design gráfico / Portfólio 2026</span>
         </div>
         <div className="intro-progress">
@@ -790,7 +812,7 @@ export function PortfolioShowcase() {
         </div>
 
         <div className="work-layout">
-          <aside className="project-index" aria-label="Índice de projetos">
+          <aside ref={projectIndexRef} className="project-index" aria-label="Índice de projetos">
             {projects.map((project, index) => (
               <button
                 className={`project-index-row ${index === active ? "is-active" : ""}`}
