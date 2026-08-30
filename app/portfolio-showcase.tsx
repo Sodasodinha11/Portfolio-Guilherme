@@ -487,7 +487,7 @@ export function PortfolioShowcase() {
         });
       });
 
-      gsap.from(".contact-links a, .footer-note", {
+      gsap.from(".footer-note", {
         y: 34,
         opacity: 0,
         duration: 0.68,
@@ -880,7 +880,7 @@ export function PortfolioShowcase() {
         <div className="footer-heading"><h2><span className="couture-face">VAMOS CRIAR<br />ALGO JUNTOS?</span></h2><p><em>Disponível para projetos e colaborações.</em></p></div>
         <div className="contact-links">
           <a href="mailto:gui_8.0@hotmail.com"><span>E-mail</span>gui_8.0@hotmail.com</a>
-          <a href="https://www.linkedin.com/in/guilherme-miranda-9336723b5" target="_blank" rel="noreferrer"><span>LinkedIn</span>Guilherme Miranda</a>
+          <a href="https://www.linkedin.com/in/guilherme-miranda-9336723b5" target="_blank" rel="noreferrer"><span>LinkedIn</span>linkedin.com/in/guilherme-miranda-9336723b5</a>
         </div>
         <p className="footer-note">Guilherme Miranda © 2026 · Brasil</p>
       </footer>

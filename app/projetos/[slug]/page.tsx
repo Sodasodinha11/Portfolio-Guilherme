@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProject, projects } from "../../project-data";
 import { ProjectMotion } from "../../project-motion";
@@ -43,8 +42,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <img className="ambient-shape ambient-shape--paper" src="/media/blob-paper.svg" alt="" width="500" height="500" />
       </div>
       <header className="project-nav">
-        <Link href="/#trabalhos">Voltar aos trabalhos</Link>
-        <Link className="wordmark" href="/" aria-label="Página inicial">GM<span>®</span></Link>
+        <a href="/#trabalhos">Voltar aos trabalhos</a>
+        <a className="wordmark" href="/" aria-label="Página inicial">GM<span>®</span></a>
         <span>{project.year}</span>
       </header>
 
@@ -78,10 +77,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         )}
       </section>
 
-      <Link className="next-project" href={`/projetos/${nextProject.slug}`}>
+      <a className="next-project" href={`/projetos/${nextProject.slug}`}>
         <span>Próximo projeto</span>
         <strong><span className="couture-face">{nextProject.title}</span></strong>
-      </Link>
+      </a>
     </main>
   );
 }
