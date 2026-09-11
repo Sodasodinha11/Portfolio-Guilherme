@@ -295,6 +295,28 @@ export function PortfolioShowcase() {
   const wheelGestureTimer = useRef<number | null>(null);
   const wheelDelta = useRef(0);
   const didSwipe = useRef(false);
+  const projectTransition = useRef<gsap.core.Timeline | null>(null);
+
+  // A history restore can reuse the DOM without remounting React.
+  const clearProjectTransition = useCallback(() => {
+    projectTransition.current?.kill();
+    projectTransition.current = null;
+    document.querySelectorAll('.project-transition-curtain, .project-transition-clone').forEach((element) => {
+      gsap.killTweensOf(element);
+      element.remove();
+    });
+    didSwipe.current = false;
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("pagehide", clearProjectTransition);
+    window.addEventListener("pageshow", clearProjectTransition);
+    return () => {
+      window.removeEventListener("pagehide", clearProjectTransition);
+      window.removeEventListener("pageshow", clearProjectTransition);
+      clearProjectTransition();
+    };
+  }, [clearProjectTransition]);
 
   const pulseGallery = useCallback((direction: number) => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -370,11 +392,34 @@ export function PortfolioShowcase() {
     }
 
     gsap.registerPlugin(ScrollTrigger, Draggable, InertiaPlugin);
-    document.body.style.overflow = "hidden";
+    const introElement = mainRef.current?.querySelector<HTMLElement>(".intro-motion");
+    const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined;
+    const skipIntro = Boolean(window.location.hash) || navigation?.type === "back_forward";
+    let introTimeline: gsap.core.Timeline | undefined;
+    let introTimeout: number | undefined;
+    if (!skipIntro) {
+      introElement?.classList.add("is-playing");
+      document.body.style.overflow = "hidden";
+    }
 
     const releasePage = () => {
       document.body.style.overflow = "";
+      introElement?.classList.remove("is-playing");
+      window.clearTimeout(introTimeout);
     };
+    const finishIntro = () => {
+      introTimeline?.progress(1);
+      releasePage();
+    };
+    const restorePage = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        finishIntro();
+        ScrollTrigger.refresh();
+      }
+    };
+    window.addEventListener("pageshow", restorePage);
+    window.addEventListener("pagehide", finishIntro);
+    if (!skipIntro) introTimeout = window.setTimeout(finishIntro, 8000);
 
     const context = gsap.context(() => {
       gsap.to(".ambient-shape--orchid", { x: 82, y: -58, rotation: 14, scale: 1.06, duration: 7.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
@@ -394,24 +439,24 @@ export function PortfolioShowcase() {
         defaults: { ease: "power4.out" },
         onComplete: releasePage,
       });
+      introTimeline = intro;
 
       intro
         .from(".intro-progress-number", {
           yPercent: 30,
           opacity: 0,
-          filter: "blur(10px)",
-          duration: 0.34,
+          duration: 0.45,
         }, 0)
         .from(".intro-progress-track", {
           scaleX: 0,
           transformOrigin: "left center",
-          duration: 0.82,
-          ease: "power2.inOut",
+          duration: 1,
+          ease: "sine.inOut",
         }, 0)
         .to(progress, {
           value: 100,
-          duration: 0.82,
-          ease: "power2.inOut",
+          duration: 1,
+          ease: "sine.inOut",
           onUpdate: () => {
             if (progressNumber) progressNumber.textContent = `${Math.round(progress.value)}%`;
           },
@@ -419,10 +464,9 @@ export function PortfolioShowcase() {
         .to(".intro-progress", {
           yPercent: -18,
           opacity: 0,
-          filter: "blur(12px)",
-          duration: 0.34,
-          ease: "power3.in",
-        }, 0.78)
+          duration: 0.45,
+          ease: "sine.inOut",
+        }, 0.92)
         .set(".intro-layout, .intro-topline", { autoAlpha: 1 }, 0.88)
         .from(".intro-shape", {
           opacity: 0,
@@ -440,42 +484,39 @@ export function PortfolioShowcase() {
           stagger: 0.03,
         }, 0.9)
         .from(".intro-poster-card", {
-          yPercent: 108,
-          clipPath: "inset(100% 0 0 0)",
-          rotation: 2.4,
-          duration: 0.72,
-          stagger: 0.06,
+          yPercent: 32,
+          opacity: 0,
+          rotation: 1.2,
+          duration: 0.95,
+          ease: "power3.out",
+          stagger: 0.09,
         }, 0.92)
         .from(".intro-title .kinetic-letter", {
-          x: 22,
-          yPercent: 70,
+          x: 10,
+          yPercent: 38,
           opacity: 0,
-          rotationX: -65,
-          filter: "blur(9px)",
-          transformPerspective: 700,
-          duration: 0.58,
+          duration: 0.8,
           stagger: 0.018,
         }, 0.94)
         .to(".intro-poster-card img", { filter: "grayscale(0)", duration: 0.34, stagger: 0.04 }, 1.4)
-        .to(".intro-motion", { clipPath: "inset(0 0 100% 0)", duration: 0.62, ease: "power4.inOut" }, 1.96)
+        .to(".intro-motion", { yPercent: -100, duration: 0.95, ease: "power3.inOut" }, 2.2)
         .set(".intro-motion", { display: "none" })
         .call(releasePage)
         .from(".topbar", { y: -14, opacity: 0, duration: 0.42 }, "-=.42")
         .from(".hero .section-label, .hero .kicker", { y: 14, opacity: 0, duration: 0.38, stagger: 0.04 }, "-=.3")
         .from(".hero .kinetic-letter", {
-          x: 18,
-          yPercent: 48,
+          x: 8,
+          yPercent: 28,
           opacity: 0,
-          rotationX: -52,
-          filter: "blur(8px)",
-          transformPerspective: 720,
-          duration: 0.64,
+          duration: 0.8,
           stagger: 0.014,
           clearProps: "filter,transform,opacity",
         }, "-=.28")
         .from(".statement, .hero-actions, .hero-availability", { y: 18, opacity: 0, duration: 0.48, stagger: 0.05 }, "-=.48")
         .from(".portrait-stage", { y: 20, opacity: 0, scale: 0.92, rotation: -4, duration: 0.7 }, "-=.64")
         .from(".portrait-caption", { opacity: 0, y: 10, duration: 0.34 }, "-=.28");
+
+      if (skipIntro) finishIntro();
 
       gsap.from(".work-intro > .section-label, .work-title-row > p", {
         y: 54,
@@ -533,6 +574,8 @@ export function PortfolioShowcase() {
     }, mainRef);
 
     return () => {
+      window.removeEventListener("pageshow", restorePage);
+      window.removeEventListener("pagehide", finishIntro);
       releasePage();
       context.revert();
     };
@@ -682,6 +725,7 @@ export function PortfolioShowcase() {
   };
 
   const openProject = (event: React.MouseEvent<HTMLButtonElement>, slug: string) => {
+    if (projectTransition.current) return;
     const image = event.currentTarget.querySelector("img");
     if (!image || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       window.location.assign(`/projetos/${slug}`);
@@ -700,7 +744,7 @@ export function PortfolioShowcase() {
       height: `${rect.height}px`,
     });
     document.body.append(curtain, clone);
-    gsap.timeline({ onComplete: () => { window.location.assign(`/projetos/${slug}`); } })
+    projectTransition.current = gsap.timeline({ onComplete: () => { window.location.assign(`/projetos/${slug}`); } })
       .to(curtain, { opacity: 1, duration: 0.28, ease: "power2.out" })
       .to(clone, {
         left: 0,

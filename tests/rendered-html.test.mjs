@@ -67,7 +67,7 @@ test("server-renders the Nature redesign case with its complete gallery", async 
 test("uses the same dynamic display treatment on every project title", async () => {
   for (const [slug, title] of [
     ["nature", "Nature"],
-    ["tobi-uchiha", "Tobi Uchiha"],
+    ["tobi-uchiha", "Uchiha Obito"],
     ["gus-art", "Gus"],
     ["ecco2k", "ECCO2K"],
   ]) {

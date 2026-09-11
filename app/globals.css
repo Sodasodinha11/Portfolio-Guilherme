@@ -556,6 +556,7 @@ footer > .section-label { grid-column: 1 / -1; align-self: start; padding-bottom
 }
 
 .intro-motion {
+  display: none;
   position: fixed;
   z-index: 120;
   inset: 0;
@@ -564,6 +565,7 @@ footer > .section-label { grid-column: 1 / -1; align-self: start; padding-bottom
   background: var(--ink);
   clip-path: inset(0 0 0 0);
 }
+.intro-motion.is-playing { display: block; will-change: transform; }
 .intro-motion::after {
   content: "";
   position: absolute;
