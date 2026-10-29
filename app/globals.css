@@ -524,12 +524,11 @@ footer > .section-label { grid-column: 1 / -1; align-self: start; padding-bottom
 .footer-heading { display: grid; gap: 34px; }
 .footer-heading h2 { font-size: clamp(52px, 6.7vw, 112px); }
 .footer-heading p { color: var(--brand-accent); }
-.contact-links { align-self: end; display: grid; gap: 18px; }
-.contact-link-row {
-  display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
+.contact-links {
+  align-self: end;
+  display: flex;
   align-items: center;
-  column-gap: 14px;
+  gap: 14px;
 }
 .contact-link-icon {
   display: grid;
@@ -560,21 +559,6 @@ footer > .section-label { grid-column: 1 / -1; align-self: start; padding-bottom
 }
 .contact-link-icon:hover img,
 .contact-link-icon:focus-visible img { filter: brightness(0) saturate(100%) invert(65%) sepia(75%) saturate(1700%) hue-rotate(245deg) brightness(105%) contrast(105%); }
-.contact-link-copy {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-  padding: 18px 0;
-  overflow-wrap: anywhere;
-  font-size: clamp(15px, 1.5vw, 23px);
-}
-.contact-link-meta {
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-.contact-link-value { min-width: 0; }
 .footer-note {
   position: absolute;
   left: var(--page-pad);
