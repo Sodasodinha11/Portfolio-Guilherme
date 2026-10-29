@@ -526,9 +526,11 @@ footer > .section-label { grid-column: 1 / -1; align-self: start; padding-bottom
 .footer-heading p { color: var(--brand-accent); }
 .contact-links {
   align-self: end;
+  justify-self: end;
   display: flex;
   align-items: center;
   gap: 14px;
+  margin-bottom: 18px;
 }
 .contact-link-icon {
   display: grid;
