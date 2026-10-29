@@ -525,35 +525,56 @@ footer > .section-label { grid-column: 1 / -1; align-self: start; padding-bottom
 .footer-heading h2 { font-size: clamp(52px, 6.7vw, 112px); }
 .footer-heading p { color: var(--brand-accent); }
 .contact-links { align-self: end; display: grid; gap: 18px; }
-.contact-links a {
+.contact-link-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas: "meta value";
-  align-items: baseline;
-  column-gap: 16px;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 14px;
+}
+.contact-link-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid color-mix(in srgb, var(--muted) 55%, transparent);
+  border-radius: 50%;
+  color: var(--paper);
+  background: rgba(255, 255, 255, 0.025);
+  transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+.contact-link-icon:hover,
+.contact-link-icon:focus-visible {
+  border-color: var(--signal);
+  color: var(--signal);
+  background: color-mix(in srgb, var(--signal) 12%, transparent);
+  transform: translateY(-2px);
+}
+.contact-link-icon:focus-visible { outline: 1px solid var(--signal); outline-offset: 4px; }
+.contact-link-icon img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  transition: filter 180ms ease;
+}
+.contact-link-icon:hover img,
+.contact-link-icon:focus-visible img { filter: brightness(0) saturate(100%) invert(65%) sepia(75%) saturate(1700%) hue-rotate(245deg) brightness(105%) contrast(105%); }
+.contact-link-copy {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
   padding: 18px 0;
-  font-size: clamp(15px, 1.5vw, 23px);
   overflow-wrap: anywhere;
+  font-size: clamp(15px, 1.5vw, 23px);
 }
 .contact-link-meta {
-  grid-area: meta;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
   color: var(--muted);
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-.contact-link-meta img {
-  display: block;
-  width: 14px;
-  height: 14px;
-  object-fit: contain;
-  opacity: 0.86;
-  filter: brightness(0) invert(1);
-}
-.contact-link-value { grid-area: value; min-width: 0; }
+.contact-link-value { min-width: 0; }
 .footer-note {
   position: absolute;
   left: var(--page-pad);
