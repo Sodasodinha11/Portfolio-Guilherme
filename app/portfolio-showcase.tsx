@@ -428,12 +428,8 @@ export function PortfolioShowcase() {
       gsap.to(".ambient-shape--cobalt", { x: -66, y: 70, rotation: -17, scale: 1.08, duration: 9, repeat: -1, yoyo: true, ease: "sine.inOut" });
       gsap.to(".ambient-shape--violet", { x: 58, y: 72, rotation: 12, scale: 1.05, duration: 10.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
       gsap.to(".ambient-shape--paper", { x: -50, y: -62, rotation: -11, scale: 1.1, duration: 8, repeat: -1, yoyo: true, ease: "sine.inOut" });
-      gsap.to(".ambient-background", {
-        xPercent: -1.2,
-        yPercent: 3,
-        ease: "none",
-        scrollTrigger: { trigger: mainRef.current, start: "top top", end: "bottom bottom", scrub: 1.2 },
-      });
+      // Keep the background atmospheric without parallax: it should stay behind
+      // the content instead of drifting into view while the page scrolls.
 
       const progress = { value: 0 };
       const progressNumber = mainRef.current?.querySelector<HTMLElement>(".intro-progress-number");
