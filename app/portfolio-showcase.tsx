@@ -419,7 +419,9 @@ export function PortfolioShowcase() {
     };
     window.addEventListener("pageshow", restorePage);
     window.addEventListener("pagehide", finishIntro);
-    if (!skipIntro) introTimeout = window.setTimeout(finishIntro, 8000);
+    // The intro is decorative. Keep a short safety valve so slow/restricted
+    // browsers always get the portfolio even if GSAP cannot finish cleanly.
+    if (!skipIntro) introTimeout = window.setTimeout(finishIntro, 5200);
 
     const context = gsap.context(() => {
       gsap.to(".ambient-shape--orchid", { x: 82, y: -58, rotation: 14, scale: 1.06, duration: 7.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
@@ -945,8 +947,20 @@ export function PortfolioShowcase() {
         <p className="section-label">Contatos</p>
         <div className="footer-heading"><h2><span className="couture-face">VAMOS CRIAR<br />ALGO JUNTOS?</span></h2><p><em>Disponível para projetos e colaborações.</em></p></div>
         <div className="contact-links">
-          <a href="mailto:gui_8.0@hotmail.com"><span>E-mail</span>gui_8.0@hotmail.com</a>
-          <a href="https://www.linkedin.com/in/guilherme-miranda-9336723b5" target="_blank" rel="noreferrer"><span>LinkedIn</span>linkedin.com/in/guilherme-miranda-9336723b5</a>
+          <a href="mailto:gui_8.0@hotmail.com" aria-label="Enviar e-mail para gui_8.0@hotmail.com">
+            <span className="contact-link-meta">
+              <img src="/icons/envelope.svg" alt="" aria-hidden="true" width="16" height="16" />
+              <span>E-mail</span>
+            </span>
+            <span className="contact-link-value">gui_8.0@hotmail.com</span>
+          </a>
+          <a href="https://www.linkedin.com/in/guilherme-miranda-9336723b5" target="_blank" rel="noopener noreferrer" aria-label="Abrir LinkedIn de Guilherme Miranda em uma nova aba">
+            <span className="contact-link-meta">
+              <img src="/icons/linkedin.svg" alt="" aria-hidden="true" width="16" height="16" />
+              <span>LinkedIn</span>
+            </span>
+            <span className="contact-link-value">linkedin.com/in/guilherme-miranda-9336723b5</span>
+          </a>
         </div>
         <p className="footer-note">Guilherme Miranda © 2026 · Brasil</p>
       </footer>
