@@ -36,7 +36,7 @@ export function ProjectMotion() {
         }, "-=.24")
         .from(".project-facts p", { y: 16, opacity: 0, duration: .4, stagger: .06 }, "-=.34");
 
-      gsap.utils.toArray<HTMLElement>(".project-media figure").forEach((figure) => {
+      gsap.utils.toArray<HTMLElement>(".project-media:not(.project-media--case) figure").forEach((figure) => {
         gsap.from(figure, {
           y: 54,
           opacity: .35,

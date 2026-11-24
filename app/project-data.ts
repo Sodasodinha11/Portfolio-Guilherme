@@ -13,6 +13,7 @@ export type Project = {
   accent: string;
   hasVideo?: boolean;
   layout?: "portrait" | "landscape";
+  caseSections?: Array<{ src: string; alt: string; width: number; height: number }>;
   gallery?: Array<{
     src: string;
     alt: string;
@@ -27,46 +28,27 @@ export const projects: Project[] = [
     eyebrow: "Redesign de Marca · 2026",
     category: "Redesign de Marca",
     year: "2026",
-    image: "/artworks/nature/nature-cover.png",
-    width: 2400,
-    height: 1350,
-    alt: "Nova assinatura visual da Nature em verde claro sobre fundo verde escuro",
-    description: "Redesign de identidade visual desenvolvido para uma cliente, com uma assinatura mais orgânica, próxima e reconhecível.",
-    role: "Redesign de logo, construção do símbolo, sistema de versões e aplicações visuais.",
+    image: "/artworks/nature/v8-cover.webp",
+    width: 1400,
+    height: 760,
+    alt: "Assinatura visual Nature em verde-claro sobre fundo verde-escuro",
+    description: "Redesign de identidade visual desenvolvido para uma cliente. A proposta aproxima a comida natural da rotina, do primeiro olhar à refeição.",
+    role: "Lettering, símbolo, paleta cromática, tipografia, grafismos e aplicações da identidade visual.",
     accent: "#d06bff",
     layout: "landscape",
-    gallery: [
-      {
-        src: "/artworks/nature/nature-secondary.png",
-        alt: "Versão secundária verde escura da assinatura Nature",
-        wide: true,
-      },
-      {
-        src: "/artworks/nature/nature-versions.png",
-        alt: "Versões positiva e negativa da identidade Nature",
-      },
-      {
-        src: "/artworks/nature/nature-monochrome.png",
-        alt: "Versões monocromáticas preta e branca da marca Nature",
-      },
-      {
-        src: "/artworks/nature/nature-symbol-palette.png",
-        alt: "Símbolo e paleta de cores da identidade Nature",
-        wide: true,
-      },
-      {
-        src: "/artworks/nature/nature-awning.png",
-        alt: "Aplicação da marca Nature em toldo verde",
-        wide: true,
-      },
-      {
-        src: "/artworks/nature/nature-bag.png",
-        alt: "Aplicação da identidade Nature em embalagem de entrega",
-      },
-      {
-        src: "/artworks/nature/nature-storefront.png",
-        alt: "Aplicação da marca Nature em fachada de loja",
-      },
+    caseSections: [
+      { src: "/artworks/nature/v8-01.webp", alt: "Nature: Comida de verdade. Do natural à mesa. Início da cena com sacola kraft.", width: 1400, height: 1000 },
+      { src: "/artworks/nature/v8-02.webp", alt: "Continuação da cena de abertura com embalagem e bowl de salada Nature.", width: 1400, height: 1100 },
+      { src: "/artworks/nature/v8-03.webp", alt: "O natural, mais perto. Uma identidade que aproxima a comida natural da rotina, do primeiro olhar à refeição.", width: 1400, height: 760 },
+      { src: "/artworks/nature/v8-04.webp", alt: "Um garfo que brota. O lettering Nature e seu símbolo independente, que une garfo e folhas.", width: 1400, height: 1100 },
+      { src: "/artworks/nature/v8-05.webp", alt: "Assinaturas da marca em verde-claro, verde-escuro, positiva e negativa.", width: 1400, height: 1340 },
+      { src: "/artworks/nature/v8-06.webp", alt: "Cor que embala. Paleta cromática: Verde Nature #164921, Verde broto #B8D195, branco #FFFFFF e preto #000000.", width: 1400, height: 2220 },
+      { src: "/artworks/nature/v8-07.webp", alt: "Tem frescor. Tem sabor. Lilita One nos títulos e DM Sans nos textos do case; lettering próprio na assinatura.", width: 1400, height: 1100 },
+      { src: "/artworks/nature/v8-08.webp", alt: "Do desenho à estampa. Frutas e folhas se transformam em grafismos para papel de embalagem.", width: 1400, height: 1056 },
+      { src: "/artworks/nature/v8-09.webp", alt: "Feita pra acompanhar. Bandejas com cintas de embalagem e sacola Nature.", width: 1400, height: 1988 },
+      { src: "/artworks/nature/v8-10.webp", alt: "Da bancada à rua. Aplicações da identidade visual em avental e van.", width: 1400, height: 1588 },
+      { src: "/artworks/nature/v8-11.webp", alt: "Na mesa e na tela. Cardápios impressos e apresentação digital.", width: 1400, height: 1610 },
+      { src: "/artworks/nature/v8-12.webp", alt: "Comida de verdade. Só Nature! Símbolo e encerramento do case.", width: 1400, height: 815 },
     ],
   },
   {

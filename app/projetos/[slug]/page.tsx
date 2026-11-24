@@ -56,6 +56,15 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
       </section>
 
+      {project.caseSections?.length ? (
+        <section className="project-media project-media--case" aria-label="Apresentação do projeto">
+          {project.caseSections.map((item, index) => (
+            <figure key={item.src}>
+              <img src={item.src} alt={item.alt} width={item.width} height={item.height} loading={index === 0 ? "eager" : "lazy"} decoding="async" />
+            </figure>
+          ))}
+        </section>
+      ) : (
       <section className={`project-media ${project.hasVideo ? "has-video" : ""} ${project.gallery?.length ? "project-media--gallery" : ""}`}>
         <figure className={project.gallery?.length ? "project-media__hero" : undefined}>
           <img src={project.image} alt={project.alt} />
@@ -76,6 +85,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </figure>
         )}
       </section>
+      )}
 
       <a className="next-project" href={`/projetos/${nextProject.slug}`}>
         <span>Próximo projeto</span>
