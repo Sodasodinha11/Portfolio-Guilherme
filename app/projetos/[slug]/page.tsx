@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
+import { Fragment, type CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { getProject, projects } from "../../project-data";
-import { ProjectMotion } from "../../project-motion";
+import { NatureLogoMotion, ProjectMotion } from "../../project-motion";
 
 type ProjectPageProps = { params: Promise<{ slug: string }> };
 
@@ -59,9 +59,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {project.caseSections?.length ? (
         <section className="project-media project-media--case" aria-label="Apresentação do projeto">
           {project.caseSections.map((item, index) => (
-            <figure key={item.src}>
-              <img src={item.src} alt={item.alt} width={item.width} height={item.height} loading={index === 0 ? "eager" : "lazy"} decoding="async" />
-            </figure>
+            <Fragment key={item.src}>
+              <figure>
+                <img src={item.src} alt={item.alt} width={item.width} height={item.height} loading={index === 0 ? "eager" : "lazy"} decoding="async" />
+              </figure>
+              {project.slug === "nature" && item.src === "/artworks/nature/v8-04.png" && <NatureLogoMotion />}
+            </Fragment>
           ))}
         </section>
       ) : (
