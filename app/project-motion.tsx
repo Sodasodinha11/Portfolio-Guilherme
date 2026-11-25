@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -36,7 +36,7 @@ export function ProjectMotion() {
         }, "-=.24")
         .from(".project-facts p", { y: 16, opacity: 0, duration: .4, stagger: .06 }, "-=.34");
 
-      gsap.utils.toArray<HTMLElement>(".project-media figure").forEach((figure) => {
+      gsap.utils.toArray<HTMLElement>(".project-media:not(.project-media--case) figure").forEach((figure) => {
         gsap.from(figure, {
           y: 54,
           opacity: .35,
@@ -63,4 +63,62 @@ export function ProjectMotion() {
   }, []);
 
   return null;
+}
+
+/** Play the silent logo animation only while it is visible. */
+export function NatureLogoMotion() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let observer: IntersectionObserver | undefined;
+    let active = true;
+
+    const configure = () => {
+      observer?.disconnect();
+      video.pause();
+      video.controls = preference.matches;
+      if (preference.matches) return;
+      const play = () => {
+        video.play().catch(() => {
+          if (active) video.controls = true;
+        });
+      };
+      if (!("IntersectionObserver" in window)) {
+        play();
+        return;
+      }
+      observer = new IntersectionObserver(([entry]) => {
+        if (entry.isIntersecting) play();
+        else video.pause();
+      }, { threshold: 0.15 });
+      observer.observe(video);
+    };
+    configure();
+    preference.addEventListener("change", configure);
+    return () => {
+      active = false;
+      observer?.disconnect();
+      preference.removeEventListener("change", configure);
+      video.pause();
+    };
+  }, []);
+
+  return (
+    <figure>
+      <video
+        ref={videoRef}
+        src="/artworks/nature/nature-motion.mp4"
+        aria-label="Motion da identidade visual Nature: construção animada da assinatura da marca"
+        width={3840}
+        height={2160}
+        style={{ aspectRatio: "16 / 9", backgroundColor: "#164921" }}
+        muted
+        loop
+        playsInline
+        preload="none"
+      />
+    </figure>
+  );
 }

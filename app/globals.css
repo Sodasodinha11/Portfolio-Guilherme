@@ -928,3 +928,24 @@ footer > .section-label { grid-column: 1 / -1; align-self: start; padding-bottom
   .poster-motion,
   .poster-tilt { will-change: auto; }
 }
+
+/* Nature V8: preserve the uninterrupted Figma presentation at every viewport. */
+.project-media--case {
+  display: block;
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.project-media--case:not(.has-video) figure {
+  max-width: none;
+  margin: 0;
+}
+.project-media--case img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0;
+}
+@media (max-width: 760px) {
+  .project-media--case { padding-inline: 0; }
+}
